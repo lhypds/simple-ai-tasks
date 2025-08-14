@@ -103,3 +103,10 @@ Refresh the task list.
 
 q  
 Quit the application.  
+
+
+Gestures
+--------
+
+Mouse scroll up/down  
+Scroll through the task list.  
