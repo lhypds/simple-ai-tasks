@@ -110,8 +110,3 @@ Gestures
 
 Mouse scroll up/down  
 Scroll through the task list.  
-Not working on Windows.  
-
-Mouse click  
-Click on a task to select it.  
-Not working on Windows.  
