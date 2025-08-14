@@ -98,8 +98,8 @@ Delete a task.
 s  
 Create subtasks with AI.  
 
-c
-Refresh the task list, clearing the terminal and re-rendering the list.  
+r  
+Refresh the task list.  
 
 q  
 Quit the application.  
