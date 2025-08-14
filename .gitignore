@@ -7,3 +7,5 @@ node_modules/
 /20*/
 
 .DS_Store
+
+.env

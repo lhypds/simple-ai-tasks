@@ -7,10 +7,15 @@
   },
   "main": "lib/cli.js",
   "scripts": {
-    "start": "node bin/stask.js"
+    "start": "node bin/stask.js",
+    "build:exe": "pkg . --targets node18-win-x64 --output dist/stask.exe"
   },
   "dependencies": {
-    "blessed": "^0.1.81"
+    "blessed": "^0.1.81",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "pkg": "^5.8.0"
   },
   "author": "GitHub Copilot",
   "license": "MIT"
