@@ -1,0 +1,9 @@
+node_modules/
+
+# ignore task folders that start with these prefixes (top-level)
+/17*/
+/18*/
+/19*/
+/20*/
+
+.DS_Store

@@ -1,0 +1,17 @@
+{
+  "name": "simple-ai-tasks",
+  "version": "0.1.0",
+  "description": "Simple task management CLI.",
+  "bin": {
+    "stask": "bin/stask.js"
+  },
+  "main": "lib/cli.js",
+  "scripts": {
+    "start": "node bin/stask.js"
+  },
+  "dependencies": {
+    "blessed": "^0.1.81"
+  },
+  "author": "GitHub Copilot",
+  "license": "MIT"
+}
