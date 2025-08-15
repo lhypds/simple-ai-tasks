@@ -133,7 +133,7 @@ function main() {
     const counterString = `todo:${todoCount} done:${doneCount} pending:${pendingCount}`;
     const pathString = ' ' + '`' + cwd + '`';
     const editorString = ' ' + editor;
-    statusBar.setContent((total === 0) ? ' No tasks ' : counterString + pathString + editorString);
+    statusBar.setContent(counterString + pathString + editorString);
     try { screen.render(); } catch (e) { }
   }
 
@@ -149,15 +149,21 @@ function main() {
 
   function refresh(selectedIndex = 0) {
     const tasks = readTasks(cwd);
+
     if (tasks.length === 0) {
       list.clearItems();
+
       // hide header and list, show the no-tasks box
       try { header.hide(); } catch (e) { }
       try { list.hide(); } catch (e) { }
       try { noTasksBox.show(); } catch (e) { }
       screen.render();
+
+      // update status bar to show no tasks
+      updateStatusBar([]);
       return;
     }
+
     // tasks exist: ensure header and list visible and no-tasks box hidden
     try { noTasksBox.hide(); } catch (e) { }
     try { header.show(); } catch (e) { }
@@ -184,6 +190,8 @@ function main() {
 
     renderList(screen, list, tasks, selectedIndex);
     list.tasksData = tasks; // attach
+
+    // Update the status bar
     updateStatusBar(tasks);
   }
   refresh(0);
