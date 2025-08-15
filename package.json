@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "description": "Simple task management CLI.",
   "bin": {
-    "stask": "bin/stask.js"
+    "stask": "cli.js"
   },
-  "main": "lib/cli.js",
+  "main": "cli.js",
   "scripts": {
-    "start": "node bin/stask.js"
+    "start": "node cli.js"
   },
   "dependencies": {
     "blessed": "^0.1.81",
