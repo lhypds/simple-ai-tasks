@@ -271,7 +271,21 @@ function main() {
 
     // Show only the Details field in the preview (do not show full file)
     const detailsRaw = (t.Details || '').toString();
-    const previewContent = detailsRaw.trim() ? detailsRaw : '';
+
+    // Remove the first and last empty lines, not the middle ones
+    const details = (() => {
+      const lines = detailsRaw.split('\n');
+      let start = 0;
+      let end = lines.length;
+
+      // skip leading empty lines
+      while (start < end && lines[start].trim() === '') start++;
+
+      // skip trailing empty lines
+      while (end > start && lines[end - 1].trim() === '') end--;
+      return lines.slice(start, end).map(line => line.trim()).join('\n');
+    })();
+    const previewContent = details.trim() ? details : '';
 
     previewBox = blessed.box({
       parent: screen,
