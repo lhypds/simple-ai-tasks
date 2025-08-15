@@ -418,8 +418,34 @@ function main() {
       refresh(0);
     } catch (e) { /* ignore */ }
   });
+  screen.key(['l'], () => {
+    try {
+      const tasks = list.tasksData || readTasks(cwd);
+      const t = tasks[list.selected];
+      if (!t || !t.path) return;
+      const newCwd = path.dirname(t.path);
+      if (!newCwd || newCwd === cwd) return;
+      cwd = newCwd;
+      refresh(0);
+    } catch (e) { /* ignore */ }
+  });
 
   screen.key(['left'], () => {
+    try {
+      const parent = path.dirname(cwd);
+      if (!parent || parent === cwd) return;
+      // prevent moving above the initial root directory where the program started
+      const rel = path.relative(initialRoot, parent);
+      if (rel === '' || (!rel.startsWith('..'))) {
+        // parent is inside or equal to initialRoot -> allow
+        cwd = parent;
+        refresh(0);
+      } else {
+        // parent would be outside initialRoot -> ignore
+      }
+    } catch (e) { /* ignore */ }
+  });
+  screen.key(['h'], () => {
     try {
       const parent = path.dirname(cwd);
       if (!parent || parent === cwd) return;
