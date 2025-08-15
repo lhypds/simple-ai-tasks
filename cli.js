@@ -167,10 +167,17 @@ function main() {
     if (tasks.length === 0) {
       list.clearItems();
 
-      // hide header and list, show the no-tasks box
-      try { header.hide(); } catch (e) { }
-      try { list.hide(); } catch (e) { }
-      try { noTasksBox.show(); } catch (e) { }
+      // If we're at the initial root directory, show the no-tasks box; otherwise show an empty list
+      if (cwd === initialRoot) {
+        try { header.hide(); } catch (e) { }
+        try { list.hide(); } catch (e) { }
+        try { noTasksBox.show(); } catch (e) { }
+      } else {
+        try { noTasksBox.hide(); } catch (e) { }
+        try { header.show(); } catch (e) { }
+        try { list.show(); } catch (e) { }
+      }
+
       screen.render();
 
       // update status bar to show no tasks
