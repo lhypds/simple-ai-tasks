@@ -91,10 +91,14 @@ function renderList(screen, list, tasks, selected) {
 }
 
 function main() {
-  const cwd = process.cwd();
+  // Allow changing cwd when navigating into task folders
+  let cwd = process.cwd();
+  const initialRoot = cwd; // do not allow navigating above this directory
+
+  // Create the screen
   const screen = blessed.screen({ smartCSR: true, title: 'stask', fullUnicode: true, mouse: true });
 
-  // header row (always visible)
+  // Header row (always visible)
   const header = blessed.box({
     parent: screen,
     top: 0, left: 0, height: 1, width: '100%',
@@ -354,6 +358,37 @@ function main() {
       deleteTask(cwd, t);
       refresh(Math.max(0, list.selected - 1));
     }
+  });
+
+  // 9. Change current working directory
+  // - Right arrow: change cwd into the selected task's folder (the directory containing the task file)
+  // - Left arrow: go up to the parent directory
+  screen.key(['right'], () => {
+    try {
+      const tasks = list.tasksData || readTasks(cwd);
+      const t = tasks[list.selected];
+      if (!t || !t.path) return;
+      const newCwd = path.dirname(t.path);
+      if (!newCwd || newCwd === cwd) return;
+      cwd = newCwd;
+      refresh(0);
+    } catch (e) { /* ignore */ }
+  });
+
+  screen.key(['left'], () => {
+    try {
+      const parent = path.dirname(cwd);
+      if (!parent || parent === cwd) return;
+      // prevent moving above the initial root directory where the program started
+      const rel = path.relative(initialRoot, parent);
+      if (rel === '' || (!rel.startsWith('..'))) {
+        // parent is inside or equal to initialRoot -> allow
+        cwd = parent;
+        refresh(0);
+      } else {
+        // parent would be outside initialRoot -> ignore
+      }
+    } catch (e) { /* ignore */ }
   });
 
   // Gestures
