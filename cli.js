@@ -381,6 +381,29 @@ function main() {
     }
   });
 
+  // 8.5. Mark task as done
+  screen.key('x', () => {
+    const tasks = list.tasksData || readTasks(cwd);
+    const cur = (typeof list.selected === 'number') ? list.selected : 0;
+    const t = tasks[cur];
+    if (!t) return;
+    const id = t.id;
+
+    if ((t.Status || '').toLowerCase() !== 'done') {
+      markTask(t, 'done');
+    } else {
+      markTask(t, 'todo');
+    }
+
+    // refresh list and re-select the same task by id in new ordering
+    refresh();
+    const newTasks = list.tasksData || readTasks(cwd);
+    const idx = newTasks.findIndex(x => x.id === id);
+    const sel = idx >= 0 ? idx : Math.min(cur, newTasks.length - 1);
+    try { list.select(sel); } catch (e) { }
+    try { screen.render(); } catch (e) { }
+  });
+
   // 9. Change current working directory
   // - Right arrow: change cwd into the selected task's folder (the directory containing the task file)
   // - Left arrow: go up to the parent directory
