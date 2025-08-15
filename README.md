@@ -85,8 +85,11 @@ hl
 → or ← (arrow keys)
 Move from main task and subtasks.  
 
-Space or x 
+x 
 Mark a task as done.  
+
+Space  
+Show task details.  
 
 Enter  
 Open a task to view details.  

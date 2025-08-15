@@ -241,20 +241,55 @@ function main() {
     }
   });
 
-  // 6. Toggle task done status
+  // 6. Preview task content on space (previously toggled done)
+  let previewBox = null;
+
   screen.key('space', () => {
+    // If a preview is open, close it (toggle behavior)
+    if (previewBox) {
+      try { previewBox.hide(); } catch (e) { }
+      try { previewBox.destroy(); } catch (e) { }
+      previewBox = null;
+      try { list.focus(); } catch (e) { }
+      try { screen.render(); } catch (e) { }
+      return;
+    }
+
     const tasks = list.tasksData || readTasks(cwd);
     const t = tasks[list.selected];
-    if (t) {
-      markTask(t, (t.Status === 'done') ? 'todo' : 'done'); refresh(list.selected);
-    }
-  });
-  screen.key('x', () => {
-    const tasks = list.tasksData || readTasks(cwd);
-    const t = tasks[list.selected];
-    if (t) {
-      markTask(t, (t.Status === 'done') ? 'todo' : 'done'); refresh(list.selected);
-    }
+    if (!t) return;
+
+    // Show only the Details field in the preview (do not show full file)
+    const detailsRaw = (t.Details || '').toString();
+    const previewContent = detailsRaw.trim() ? detailsRaw : '';
+
+    previewBox = blessed.box({
+      parent: screen,
+      top: 'center', left: 'center', width: '80%', height: '70%',
+      content: previewContent,
+      border: { type: 'line' },
+      scrollable: true,
+      keys: true,
+      vi: true,
+      mouse: true,
+      alwaysScroll: true,
+      scrollbar: { ch: ' ', track: { bg: 'gray' }, style: { bg: 'white' } },
+      style: { fg: 'white', bg: 'black', border: { fg: 'blue' } }
+    });
+
+    // Close preview with common keys and restore focus
+    previewBox.key(['q', 'escape', 'enter', 'space'], () => {
+      try { previewBox.hide(); } catch (e) { }
+      try { previewBox.destroy(); } catch (e) { }
+      previewBox = null;
+      try { list.focus(); } catch (e) { }
+      try { screen.render(); } catch (e) { }
+    });
+
+    // Ensure list doesn't capture keys while preview is open
+    try { list.blur(); } catch (e) { }
+    try { previewBox.focus(); } catch (e) { }
+    try { screen.render(); } catch (e) { }
   });
 
   // 6.5. Toggle pending status with 'p' — mark pending/todo and refresh ordering
