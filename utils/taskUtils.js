@@ -46,6 +46,25 @@ function readTasks(dir) {
   return tasks;
 }
 
+// Determine whether a task directory contains any subtasks.
+// A subtask is a subdirectory that contains a task.txt file.
+function hasSubtask(taskDir) {
+  try {
+    if (!taskDir) return false;
+    if (!fs.existsSync(taskDir) || !fs.statSync(taskDir).isDirectory()) return false;
+    const entries = fs.readdirSync(taskDir, { withFileTypes: true });
+    for (const e of entries) {
+      if (e.isDirectory()) {
+        const subTaskPath = path.join(taskDir, e.name, TASK_FILE);
+        if (fs.existsSync(subTaskPath)) return true;
+      }
+    }
+    return false;
+  } catch (e) {
+    return false;
+  }
+}
+
 function createTask(dir) {
   const id = Math.floor(Date.now() / 1000).toString();
   const taskDir = path.join(dir, id);
@@ -103,5 +122,6 @@ module.exports = {
   deleteTask,
   openTask,
   parseTask,
-  readTasks
+  readTasks,
+  hasSubtask
 };

@@ -7,7 +7,8 @@ const {
   markTask,
   deleteTask,
   openTask,
-  readTasks
+  readTasks,
+  hasSubtask
 } = require('./utils/taskUtils');
 const { clearScreen } = require('./utils/screenUtils');
 const { getEditor } = require('./utils/editorUtils');
@@ -54,8 +55,21 @@ function formatOriginForDisplay(s, width) {
 
 function renderList(screen, list, tasks, selected) {
   const lines = tasks.map((t, i) => {
-    // show [x] for done, [p] for pending, [ ] for todo/others
-    const check = (t.Status === 'done') ? '[x]' : (t.Status === 'pending' ? '[p]' : '[ ]');
+    // determine status display: done/pending/todo (with subtask marker)
+    const statusRaw = (t.Status || '').toLowerCase();
+    let check;
+    if (statusRaw === 'done') {
+      check = '[x]';
+    } else if (statusRaw === 'pending') {
+      check = '[p]';
+    } else {
+      // todo or other: show [+] if it has subtasks
+      const taskDir = t.path ? path.dirname(t.path) : '';
+      let sub = false;
+      try { sub = hasSubtask(taskDir); } catch (e) { sub = false; }
+      check = sub ? '[+]' : '[ ]';
+    }
+
     const labels = t.Labels || '';
     const rawTitle = (t.Title || '').trim();
     const detailsRaw = t.Details || '';
