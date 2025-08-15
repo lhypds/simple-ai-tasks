@@ -30,6 +30,17 @@ Installation
 Install globally with:
 `npm install -g .`
 
+Uninstallation
+`npm uninstall -g simple-ai-tasks`
+
+
+Setup
+-----
+
+.env  
+`EDITOR=nvim`  
+Tested available editors: vim, nvim, subl, notepad  
+
 
 Command
 -------
