@@ -16,17 +16,32 @@ const path = require('path');
 const fs = require('fs');
 (function loadDotenv() {
   try {
-    // prefer .env in the current working directory
-    let dotenvPath = path.resolve(process.cwd(), '.env');
-    if (!fs.existsSync(dotenvPath)) {
-      // fallback to project root (one level up from this file)
-      dotenvPath = path.resolve(__dirname, '..', '.env');
-    }
-    if (fs.existsSync(dotenvPath)) {
-      require('dotenv').config({ path: dotenvPath });
+    // require dotenv only if available so this script still works without the package
+    let dotenv = null;
+    try { dotenv = require('dotenv'); } catch (e) { /* dotenv not installed */ }
+    if (!dotenv) return;
+
+    // try common locations in order: cwd (where user runs the CLI), script dir (project root), then parent
+    const candidates = [
+      path.resolve(process.cwd(), '.env'),
+      path.resolve(__dirname, '.env'),
+      path.resolve(__dirname, '..', '.env')
+    ];
+
+    for (const dotenvPath of candidates) {
+      if (fs.existsSync(dotenvPath)) {
+        dotenv.config({ path: dotenvPath });
+        break;
+      }
     }
   } catch (e) { /* dotenv optional or not installed; ignore */ }
 })();
+
+// Helper to pick an editor. Prefer EDITOR or VISUAL env vars (which can be loaded from .env),
+// fall back to platform defaults.
+function getEditor() {
+  return process.env.EDITOR || process.env.VISUAL || (process.platform === 'win32' ? 'notepad' : 'vim');
+}
 
 function formatOriginForDisplay(s, width) {
   s = (s || '').toString().trim();
@@ -119,7 +134,7 @@ function main() {
     const total = ts.length;
 
     // Show: <counters> `path-to-task-folder` <editor>
-    const editor = process.env.EDITOR || (process.platform === 'win32' ? 'notepad' : 'vim');
+    const editor = getEditor();
 
     // counters for statuses: todo (including empty), done, pending
     let todoCount = 0, doneCount = 0, pendingCount = 0;
@@ -217,7 +232,7 @@ function main() {
   // 4. Add a new task
   screen.key('a', () => {
     const taskPath = createTask(cwd);
-    const editor = process.env.EDITOR || (process.platform === 'win32' ? 'notepad' : 'vim');
+    const editor = getEditor();
     const { spawnSync } = require('child_process');
     // temporarily leave blessed fullscreen so editor can use the terminal
     try { screen.leave(); } catch (e) { }
@@ -232,7 +247,7 @@ function main() {
     const tasks = list.tasksData || readTasks(cwd);
     const t = tasks[list.selected];
     if (t) {
-      const editor = process.env.EDITOR || (process.platform === 'win32' ? 'notepad' : 'vim');
+      const editor = getEditor();
       const { spawnSync } = require('child_process');
       try { screen.leave(); } catch (e) { }
       spawnSync(editor, [t.path], { stdio: 'inherit' });
