@@ -10,6 +10,7 @@ const {
   readTasks
 } = require('./utils/taskUtils');
 const { clearScreen } = require('./utils/screenUtils');
+const { getEditor } = require('./utils/editorUtils');
 
 // load .env
 const path = require('path');
@@ -36,12 +37,6 @@ const fs = require('fs');
     }
   } catch (e) { /* dotenv optional or not installed; ignore */ }
 })();
-
-// Helper to pick an editor. Prefer EDITOR or VISUAL env vars (which can be loaded from .env),
-// fall back to platform defaults.
-function getEditor() {
-  return process.env.EDITOR || process.env.VISUAL || (process.platform === 'win32' ? 'notepad' : 'vim');
-}
 
 function formatOriginForDisplay(s, width) {
   s = (s || '').toString().trim();
