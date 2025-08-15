@@ -234,16 +234,27 @@ function main() {
   // Shortcuts
   // 1. Exit the application
   screen.key(['q', 'C-c'], () => {
+    // do not toggle pending if preview is open
+    if (isPreviewing) return;
+
     try { screen.destroy(); } catch (e) { }
     clearScreen();
     process.exit(0);
   });
 
   // 2. Refresh the task list
-  screen.key('l', () => { refresh(list.selected); });
+  screen.key('l', () => {
+    // do not toggle pending if preview is open
+    if (isPreviewing) return;
+
+    refresh(list.selected);
+  });
 
   // 3. Refresh the task list
   screen.key('r', () => {
+    // do not toggle pending if preview is open
+    if (isPreviewing) return;
+
     const sel = (typeof list.selected === 'number') ? list.selected : 0;
     // Re-render the blessed UI and refresh the list — do NOT clear the raw terminal buffer
     try { refresh(sel); } catch (e) { try { screen.render(); } catch (err) { /* ignore */ } }
@@ -251,6 +262,9 @@ function main() {
 
   // 4. Add a new task
   screen.key('a', () => {
+    // do not toggle pending if preview is open
+    if (isPreviewing) return;
+
     const taskPath = createTask(cwd);
     const editor = getEditor();
     const { spawnSync } = require('child_process');
@@ -264,6 +278,11 @@ function main() {
 
   // 5. Edit a task
   screen.key('e', () => {
+    // Close preview if it's open
+    if (isPreviewing) {
+      closePreview()
+    }
+
     const tasks = list.tasksData || readTasks(cwd);
     const t = tasks[list.selected];
     if (t) {
@@ -278,16 +297,24 @@ function main() {
 
   // 6. Preview task content on space (previously toggled done)
   let previewBox = null;
+  let isPreviewing = false;
 
-  screen.key('space', () => {
-    // If a preview is open, close it (toggle behavior)
+  // Close preview
+  function closePreview() {
     if (previewBox) {
       try { previewBox.hide(); } catch (e) { }
       try { previewBox.destroy(); } catch (e) { }
       previewBox = null;
+      isPreviewing = false;
       try { list.focus(); } catch (e) { }
       try { screen.render(); } catch (e) { }
-      return;
+    }
+  }
+
+  screen.key('space', () => {
+    // If a preview is open, close it (toggle behavior)
+    if (isPreviewing && previewBox) {
+      closePreview();
     }
 
     const tasks = list.tasksData || readTasks(cwd);
@@ -325,12 +352,15 @@ function main() {
       scrollbar: { ch: ' ', track: { bg: 'gray' }, style: { bg: 'white' } },
       style: { fg: 'white', bg: 'black', border: { fg: 'blue' } }
     });
+    // mark preview as active
+    isPreviewing = true;
 
     // Close preview with common keys and restore focus
     previewBox.key(['q', 'escape', 'enter', 'space'], () => {
       try { previewBox.hide(); } catch (e) { }
       try { previewBox.destroy(); } catch (e) { }
       previewBox = null;
+      isPreviewing = false;
       try { list.focus(); } catch (e) { }
       try { screen.render(); } catch (e) { }
     });
@@ -343,6 +373,9 @@ function main() {
 
   // 6.5. Toggle pending status with 'p' — mark pending/todo and refresh ordering
   screen.key('p', () => {
+    // do not toggle pending if preview is open
+    if (isPreviewing) return;
+
     const tasks = list.tasksData || readTasks(cwd);
     const cur = (typeof list.selected === 'number') ? list.selected : 0;
     const t = tasks[cur];
@@ -373,6 +406,9 @@ function main() {
 
   // 8. Delete a task
   screen.key('d', () => {
+    // do not toggle pending if preview is open
+    if (isPreviewing) return;
+
     const tasks = list.tasksData || readTasks(cwd);
     const t = tasks[list.selected];
     if (t) {
@@ -383,6 +419,9 @@ function main() {
 
   // 8.5. Mark task as done
   screen.key('x', () => {
+    // do not toggle pending if preview is open
+    if (isPreviewing) return;
+
     const tasks = list.tasksData || readTasks(cwd);
     const cur = (typeof list.selected === 'number') ? list.selected : 0;
     const t = tasks[cur];
@@ -408,6 +447,9 @@ function main() {
   // - Right arrow: change cwd into the selected task's folder (the directory containing the task file)
   // - Left arrow: go up to the parent directory
   screen.key(['right'], () => {
+    // do not toggle pending if preview is open
+    if (isPreviewing) return;
+
     try {
       const tasks = list.tasksData || readTasks(cwd);
       const t = tasks[list.selected];
@@ -419,6 +461,9 @@ function main() {
     } catch (e) { /* ignore */ }
   });
   screen.key(['l'], () => {
+    // do not toggle pending if preview is open
+    if (isPreviewing) return;
+
     try {
       const tasks = list.tasksData || readTasks(cwd);
       const t = tasks[list.selected];
@@ -431,6 +476,9 @@ function main() {
   });
 
   screen.key(['left'], () => {
+    // do not toggle pending if preview is open
+    if (isPreviewing) return;
+
     try {
       const parent = path.dirname(cwd);
       if (!parent || parent === cwd) return;
@@ -446,6 +494,9 @@ function main() {
     } catch (e) { /* ignore */ }
   });
   screen.key(['h'], () => {
+    // do not toggle pending if preview is open
+    if (isPreviewing) return;
+
     try {
       const parent = path.dirname(cwd);
       if (!parent || parent === cwd) return;
