@@ -85,7 +85,7 @@ hl
 → or ← (arrow keys)
 Move from main task and subtasks.  
 
-Space  
+Space or x 
 Mark a task as done.  
 
 Enter  
@@ -100,6 +100,9 @@ Create subtasks with AI.
 
 r  
 Refresh the task list.  
+
+p
+Pending a task.  
 
 q  
 Quit the application.  
