@@ -65,13 +65,13 @@ function hasSubtask(taskDir) {
   }
 }
 
-function createTask(dir) {
+function createTask(dir, title = '', labels = '', origin = '', status = 'todo', details = '') {
   const id = Math.floor(Date.now() / 1000).toString();
   const taskDir = path.join(dir, id);
   fs.mkdirSync(taskDir);
   const taskPath = path.join(taskDir, TASK_FILE);
   const now = formatDate(new Date());
-  const template = `Title: \nStatus: todo\nLabels: \nOrigin: \nCreated at: ${now}\nLast edit at: ${now}\nDetails:\n\n`;
+  const template = `Title: ${title}\nStatus: ${status}\nLabels: ${labels}\nOrigin: ${origin}\nCreated at: ${now}\nLast edit at: ${now}\nDetails:\n${details}\n`;
   fs.writeFileSync(taskPath, template, 'utf8');
 
   // return path to let caller open editor while screen is suspended
