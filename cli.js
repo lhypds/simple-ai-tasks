@@ -399,6 +399,9 @@ function main() {
 
   // 7. Open current task folder
   screen.key('enter', () => {
+    // do not toggle pending if preview is open
+    if (isPreviewing) return;
+
     const tasks = list.tasksData || readTasks(cwd);
     const t = tasks[list.selected];
     if (t) { openTask(t); }
