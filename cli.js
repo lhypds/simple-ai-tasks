@@ -294,6 +294,23 @@ function main() {
       refresh(list.selected);
     }
   });
+  screen.key('i', () => {
+    // Close preview if it's open
+    if (isPreviewing) {
+      closePreview()
+    }
+
+    const tasks = list.tasksData || readTasks(cwd);
+    const t = tasks[list.selected];
+    if (t) {
+      const editor = getEditor();
+      const { spawnSync } = require('child_process');
+      try { screen.leave(); } catch (e) { }
+      spawnSync(editor, [t.path], { stdio: 'inherit' });
+      try { screen.render(); } catch (e) { }
+      refresh(list.selected);
+    }
+  });
 
   // 6. Preview task content on space (previously toggled done)
   let previewBox = null;
