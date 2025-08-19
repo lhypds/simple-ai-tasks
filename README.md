@@ -110,7 +110,7 @@ TODO tasks first, then done tasks, then pending tasks.
 Shortcuts
 ---------
 
-l
+l  
 List tasks, or refresh task list.  
 
 a  
@@ -128,7 +128,7 @@ h and l
 → or ← (arrow keys)
 Move from main task and subtasks.  
 
-x 
+x  
 Mark a task as done.  
 
 Space  
@@ -146,7 +146,7 @@ Create subtasks with AI.
 r  
 Refresh the task list.  
 
-p
+p  
 Pending a task.  
 
 q  
