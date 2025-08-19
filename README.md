@@ -158,3 +158,4 @@ Gestures
 
 Mouse scroll up/down  
 Scroll through the task list.  
+Not working on Windows.  
