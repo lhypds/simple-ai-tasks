@@ -22,8 +22,12 @@ Task Preview
 Use `space` to preview task details.  
 Support `vi` style keybindings.  
 
-Highlighting  
-Current task is highlighted with a different color.
+Subtasks  
+Support subtasks inside the a task folder.  
+
+Shortcuts  
+Refer `Shortcuts` section.  
+Support a `vi` style keybindings, like `j`, `k`, `h`, `l` to navigate between tasks and subtasks.  
 
 Status bar  
 Shows the task counter, task folder path, and default text editor.  
