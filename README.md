@@ -20,6 +20,7 @@ Features
 
 Task Preview  
 Use `space` to preview task details.  
+Support `vi` style keybindings.  
 
 Highlighting  
 Current task is highlighted with a different color.
