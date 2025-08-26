@@ -271,8 +271,14 @@ function main() {
     // temporarily leave blessed fullscreen so editor can use the terminal
     try { screen.leave(); } catch (e) { }
     spawnSync(editor, [taskPath], { stdio: 'inherit' });
-    // restore screen and refresh tasks after editor exits
+    // re-enter blessed / alternate screen (be defensive about APIs)
+    try {
+      if (typeof screen.enter === 'function') screen.enter();
+      else if (screen.program && typeof screen.program.enter === 'function') screen.program.enter();
+    } catch (e) { }
+    // restore screen, focus and refresh tasks after editor exits
     try { screen.render(); } catch (e) { }
+    try { list.focus(); } catch (e) { }
     refresh();
   });
 
@@ -290,7 +296,13 @@ function main() {
       const { spawnSync } = require('child_process');
       try { screen.leave(); } catch (e) { }
       spawnSync(editor, [t.path], { stdio: 'inherit' });
+      // re-enter blessed / alternate screen (be defensive about APIs)
+      try {
+        if (typeof screen.enter === 'function') screen.enter();
+        else if (screen.program && typeof screen.program.enter === 'function') screen.program.enter();
+      } catch (e) { }
       try { screen.render(); } catch (e) { }
+      try { list.focus(); } catch (e) { }
       refresh(list.selected);
     }
   });
@@ -307,7 +319,13 @@ function main() {
       const { spawnSync } = require('child_process');
       try { screen.leave(); } catch (e) { }
       spawnSync(editor, [t.path], { stdio: 'inherit' });
+      // re-enter blessed / alternate screen (be defensive about APIs)
+      try {
+        if (typeof screen.enter === 'function') screen.enter();
+        else if (screen.program && typeof screen.program.enter === 'function') screen.program.enter();
+      } catch (e) { }
       try { screen.render(); } catch (e) { }
+      try { list.focus(); } catch (e) { }
       refresh(list.selected);
     }
   });
