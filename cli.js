@@ -106,7 +106,29 @@ function renderList(screen, list, tasks, selected) {
 
 function main() {
   // Allow changing cwd when navigating into task folders
+  // Check if a path argument was provided
+  const args = process.argv.slice(2);
   let cwd = process.cwd();
+  
+  if (args.length > 0) {
+    const providedPath = args[0];
+    // Resolve the path (handles relative paths)
+    const resolvedPath = path.resolve(providedPath);
+    
+    // Check if the path exists and is a directory
+    try {
+      if (fs.existsSync(resolvedPath) && fs.statSync(resolvedPath).isDirectory()) {
+        cwd = resolvedPath;
+      } else {
+        console.error(`Error: "${providedPath}" is not a valid directory.`);
+        process.exit(1);
+      }
+    } catch (error) {
+      console.error(`Error: Cannot access "${providedPath}": ${error.message}`);
+      process.exit(1);
+    }
+  }
+  
   const initialRoot = cwd; // do not allow navigating above this directory
 
   // Create the screen
