@@ -74,6 +74,22 @@ After start it will list all tasks in current folder.
 If there is no task, it will show a message: "No tasks found."
 
 
+Create Shortcut
+---------------
+
+On macOS, create a `.command` file in the tasks folder, with content:  
+
+```
+#!/bin/bash
+stask current_directory_path
+```
+
+Make it executable:  
+`chmod +x yourfile.command`
+
+Then you can double click the file to start `stask`.  
+
+
 Task files
 ----------
 
